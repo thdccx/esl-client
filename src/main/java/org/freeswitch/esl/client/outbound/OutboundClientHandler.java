@@ -56,7 +56,7 @@ class OutboundClientHandler extends AbstractEslClientHandler {
 				.thenAcceptAsync(response -> {
 					clientHandler.onConnect(new Context(ctx.channel(), OutboundClientHandler.this),
 						new EslEvent(response, true));
-					}, callbackExecutor)
+					})
 				.exceptionally(throwable -> {
 					log.warn("send connect [{}]", throwable);
 					ctx.channel().close();
