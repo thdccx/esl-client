@@ -1,3 +1,4 @@
+package org.freeswitch.esl.client;
 import com.google.common.base.Throwables;
 
 import org.freeswitch.esl.client.dptools.Execute;
@@ -27,9 +28,9 @@ public class OutboundTest {
     public OutboundTest() {
         try {
 
-            final Client inboudClient = new Client();
-            inboudClient.connect(new InetSocketAddress("localhost", 8021), "ClueCon", 10);
-            inboudClient.addEventListener((ctx, event) -> logger.info("INBOUND onEslEvent: {}", event.getEventName()));
+//            final Client inboudClient = new Client();
+//            inboudClient.connect(new InetSocketAddress("localhost", 8021), "ClueCon", 10);
+//            inboudClient.addEventListener((ctx, event) -> logger.info("INBOUND onEslEvent: {}", event.getEventName()));
 
             final SocketClient outboundServer = new SocketClient(
                     new InetSocketAddress("localhost", 8084),
@@ -43,7 +44,7 @@ public class OutboundTest {
                                     .getMessageHeaders(), eslEvent.getEventBodyLines()));
 
                             String uuid = eslEvent.getEventHeaders()
-                                    .get("unique-id");
+                                    .get("Unique-ID");
 
                             logger.warn(
                                     "Creating execute app for uuid {}",
@@ -53,13 +54,17 @@ public class OutboundTest {
 
                             try {
 
-                                exe.answer();
-
-                                String digits = exe.playAndGetDigits(3,
-                                        5, 10, 10 * 1000, "#", prompt,
-                                        failed, "^\\d+", 10 * 1000);
-                                logger.warn("Digits collected: {}",
-                                        digits);
+                            	exe.preAnswer();
+                				exe.playback("$${sounds_dir}/en/us/callie/voice/8000/calling.wav");
+                				exe.answer();
+                				exe.echo();
+//                                exe.answer();
+//
+//                                String digits = exe.playAndGetDigits(3,
+//                                        5, 10, 10 * 1000, "#", prompt,
+//                                        failed, "^\\d+", 10 * 1000);
+//                                logger.warn("Digits collected: {}",
+//                                        digits);
 
 
                             } catch (ExecuteException e) {
@@ -68,12 +73,12 @@ public class OutboundTest {
                                         e);
 
                             } finally {
-                                try {
-                                    exe.hangup(null);
-                                } catch (ExecuteException e) {
-                                    logger.error(
-                                            "Could not hangup",e);
-                                }
+//                                try {
+//                                    exe.hangup(null);
+//                                } catch (ExecuteException e) {
+//                                    logger.error(
+//                                            "Could not hangup",e);
+//                                }
                             }
 
                         }

@@ -53,10 +53,12 @@ class OutboundClientHandler extends AbstractEslClientHandler {
 		log.debug("Received new connection from server, sending connect message");
 
 		sendApiSingleLineCommand(ctx.channel(), "connect")
-				.thenAccept(response -> clientHandler.onConnect(
-						new Context(ctx.channel(), OutboundClientHandler.this),
-						new EslEvent(response, true)))
+				.thenAcceptAsync(response -> {
+					clientHandler.onConnect(new Context(ctx.channel(), OutboundClientHandler.this),
+						new EslEvent(response, true));
+					}, callbackExecutor)
 				.exceptionally(throwable -> {
+					log.warn("send connect [{}]", throwable);
 					ctx.channel().close();
 					handleDisconnectionNotice();
 					return null;

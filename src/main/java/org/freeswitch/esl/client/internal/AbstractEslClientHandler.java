@@ -199,7 +199,7 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 		try {
 			syncLock.lock();
 			apiCalls.add(future);
-			channel.write(sb.toString());
+			channel.writeAndFlush(sb.toString());
 		} finally {
 			syncLock.unlock();
 		}
