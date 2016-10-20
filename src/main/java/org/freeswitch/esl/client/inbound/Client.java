@@ -184,6 +184,19 @@ public class Client implements IModEslApi {
 	}
 
 	/**
+	 *
+	 * @param command  API command to send
+	 * @param arg command arguments
+	 * @param jobId String Job-UUID that the server that server will use for new job
+	 * @return Job-UUID that the server will tag result event with.
+	 */
+	@Override
+	public CompletableFuture<EslEvent> sendBackgroundApiCommand(String command, String arg, String jobId) {
+		checkConnected();
+		return clientContext.get().sendBackgroundApiCommand(command, arg, jobId);
+	}
+
+	/**
 	 * Set the current event subscription for this connection to the server.  Examples of the events
 	 * argument are:
 	 * <pre>

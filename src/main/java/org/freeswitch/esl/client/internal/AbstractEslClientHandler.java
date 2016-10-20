@@ -26,6 +26,7 @@ import org.freeswitch.esl.client.transport.message.EslMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
@@ -54,8 +55,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandler<EslMessage> {
 
-	public static final String MESSAGE_TERMINATOR = "\n\n";
-	public static final String LINE_TERMINATOR = "\n";
+	private static final String MESSAGE_TERMINATOR = "\n\n";
+	private static final String LINE_TERMINATOR = "\n";
 
 	protected final Logger log = LoggerFactory.getLogger(this.getClass());
 	// used to preserve association between adding future to queue and sending message on channel
@@ -141,7 +142,7 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 	 * queue and blocks waiting for another IO thread to process an incoming {@link EslMessage} and
 	 * attach it to the callback.
 	 *
-	 * @param channel
+	 * @param channel socket connection
 	 * @param command single string to send
 	 * @return the {@link EslMessage} attached to this command's callback
 	 */
@@ -165,7 +166,7 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 	 * <p/>
 	 * The outcome of the command from the server is returned in an {@link EslMessage} object.
 	 *
-	 * @param channel
+	 * @param channel socket connection
 	 * @param command API command to send
 	 * @param arg     command arguments
 	 * @return an {@link EslMessage} containing command results
@@ -183,7 +184,7 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 	 * queue and blocks waiting for another IO thread to process an incoming {@link EslMessage} and
 	 * attach it to the callback.
 	 *
-	 * @param channel
+	 * @param channel socket connection
 	 * @return the {@link EslMessage} attached to this command's callback
 	 */
 	public CompletableFuture<EslMessage> sendApiMultiLineCommand(Channel channel, final List<String> commandLines) {
@@ -212,8 +213,8 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 	/**
 	 * Returns the Job UUID of that the response event will have.
 	 *
-	 * @param channel
-	 * @param command
+	 * @param channel socket connection
+	 * @param command socket connection
 	 * @return Job-UUID as a string
 	 */
 	public CompletableFuture<EslEvent> sendBackgroundApiCommand(Channel channel, final String command) {
@@ -231,6 +232,24 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 						return resultFuture;
 					}
 				}, backgroundJobExecutor);
+	}
+
+	/**
+	 * Send background api command with predefined Job-UUID
+	 *
+	 * @param channel socket connection
+	 * @param command command to call
+	 * @param jobId Job-UUID
+	 * @return CompletableFuture with result of command
+	 */
+	public CompletableFuture<EslEvent> sendBackgroundApiCommand(Channel channel, final String command, String jobId) {
+		List<String> commandsLines = new ArrayList<>();
+		commandsLines.add(command);
+		commandsLines.add("Job-UUID:" + jobId);
+		sendApiMultiLineCommand(channel, commandsLines);
+		final CompletableFuture<EslEvent> resultFuture = new CompletableFuture<>();
+		backgroundJobs.put(jobId, resultFuture);
+		return resultFuture;
 	}
 
 	protected abstract void handleEslEvent(ChannelHandlerContext ctx, EslEvent event);

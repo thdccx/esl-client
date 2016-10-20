@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.util.concurrent.Futures.getUnchecked;
+import static java.util.Objects.isNull;
 import static org.freeswitch.esl.client.internal.IModEslApi.EventFormat.*;
 
 public class Context implements IModEslApi {
@@ -104,6 +105,30 @@ public class Context implements IModEslApi {
 		}
 
 		return handler.sendBackgroundApiCommand(channel, sb.toString());
+	}
+
+	/**
+	 * Submit a FreeSWITCH API command with predefined Job-UUID to the server to be executed in background mode. When the server
+	 * has completed the job execution it fires a BACKGROUND_JOB Event with the execution results.
+	 * Note that this Client must be subscribed in the normal way to BACKGROUND_JOB Events, in order to
+	 * receive this event.
+	 * @param command API command to send
+	 * @param arg command arguments
+	 * @param jobId Job-UUID that the server will tag result event with.
+	 * @return promis with EslEvent containing results
+	 */
+	@Override
+	public CompletableFuture<EslEvent> sendBackgroundApiCommand(String command, String arg, String jobId) {
+		checkArgument(!isNullOrEmpty(command), "command cannot be null or empty");
+		checkArgument(!isNull(jobId), "command cannot be null");
+
+		final StringBuilder sb = new StringBuilder();
+		sb.append("bgapi ").append(command);
+		if (!isNullOrEmpty(arg)) {
+			sb.append(' ').append(arg);
+		}
+
+		return handler.sendBackgroundApiCommand(channel, sb.toString(), jobId);
 	}
 
 	/**
