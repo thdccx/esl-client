@@ -107,7 +107,7 @@ public abstract class AbstractEslClientHandler extends SimpleChannelInboundHandl
 	}
 
 	protected void handleEslMessage(ChannelHandlerContext ctx, EslMessage message) {
-		log.info("Received message: [{}]", message);
+		log.debug("Received message: [{}]", message);
 		final String contentType = message.getContentType();
 
 		switch (contentType) {
