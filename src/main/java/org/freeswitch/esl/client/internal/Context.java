@@ -235,24 +235,16 @@ public class Context implements IModEslApi {
 	 * @return a {@link CommandResponse} with the server's response.
 	 */
 	@Override
-	public CommandResponse deleteEventFilter(String eventHeader, String valueToFilter) {
+	public CompletableFuture<EslMessage> deleteEventFilter(String eventHeader, String valueToFilter) {
 
 		checkArgument(!isNullOrEmpty(eventHeader), "eventHeader cannot be null or empty");
 
-		try {
-
-			final StringBuilder sb = new StringBuilder();
-			sb.append("filter delete ").append(eventHeader);
-			if (!isNullOrEmpty(valueToFilter)) {
-				sb.append(' ').append(valueToFilter);
-			}
-
-			final EslMessage response = getUnchecked(handler.sendApiSingleLineCommand(channel, sb.toString()));
-			return new CommandResponse(sb.toString(), response);
-
-		} catch (Throwable t) {
-			throw propagate(t);
+		final StringBuilder sb = new StringBuilder();
+		sb.append("filter delete ").append(eventHeader);
+		if (!isNullOrEmpty(valueToFilter)) {
+			sb.append(' ').append(valueToFilter);
 		}
+		return handler.sendApiSingleLineCommand(channel, sb.toString());
 	}
 
 	/**

@@ -65,7 +65,7 @@ public interface IModEslApi {
 
 	CommandResponse addEventFilter(String eventHeader, String valueToFilter);
 
-	CommandResponse deleteEventFilter(String eventHeader, String valueToFilter);
+	CompletableFuture<EslMessage> deleteEventFilter(String eventHeader, String valueToFilter);
 
 	CommandResponse sendMessage(SendMsg sendMsg);
 

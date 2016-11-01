@@ -264,7 +264,7 @@ public class Client implements IModEslApi {
 	 * @return a {@link CommandResponse} with the server's response.
 	 */
 	@Override
-	public CommandResponse deleteEventFilter(String eventHeader, String valueToFilter) {
+	public CompletableFuture<EslMessage> deleteEventFilter(String eventHeader, String valueToFilter) {
 		checkConnected();
 		return clientContext.get().deleteEventFilter(eventHeader, valueToFilter);
 	}
