@@ -59,17 +59,17 @@ public interface IModEslApi {
 
 	CompletableFuture<EslEvent> sendBackgroundApiCommand(String command, String arg, String jobId);
 
-	CommandResponse setEventSubscriptions(EventFormat format, String events);
+	CompletableFuture<EslMessage> setEventSubscriptions(EventFormat format, String events);
 
-	CommandResponse cancelEventSubscriptions();
+	CompletableFuture<EslMessage> cancelEventSubscriptions();
 
-	CommandResponse addEventFilter(String eventHeader, String valueToFilter);
+	CompletableFuture<EslMessage> addEventFilter(String eventHeader, String valueToFilter);
 
 	CompletableFuture<EslMessage> deleteEventFilter(String eventHeader, String valueToFilter);
 
 	CommandResponse sendMessage(SendMsg sendMsg);
 
-	CommandResponse setLoggingLevel(LoggingLevel level);
+	CompletableFuture<EslMessage> setLoggingLevel(LoggingLevel level);
 
-	CommandResponse cancelLogging();
+	CompletableFuture<EslMessage> cancelLogging();
 }

@@ -211,10 +211,10 @@ public class Client implements IModEslApi {
 	 *
 	 * @param format can be { plain | xml }
 	 * @param events { all | space separated list of events }
-	 * @return a {@link CommandResponse} with the server's response.
+	 * @return a {@link CompletableFuture<EslMessage>} with the server's response.
 	 */
 	@Override
-	public CommandResponse setEventSubscriptions(EventFormat format, String events) {
+	public CompletableFuture<EslMessage> setEventSubscriptions(EventFormat format, String events) {
 		checkConnected();
 		return clientContext.get().setEventSubscriptions(format, events);
 	}
@@ -225,7 +225,7 @@ public class Client implements IModEslApi {
 	 * @return a {@link CommandResponse} with the server's response.
 	 */
 	@Override
-	public CommandResponse cancelEventSubscriptions() {
+	public CompletableFuture<EslMessage> cancelEventSubscriptions() {
 		checkConnected();
 		return clientContext.get().cancelEventSubscriptions();
 	}
@@ -248,10 +248,10 @@ public class Client implements IModEslApi {
 	 *
 	 * @param eventHeader   to filter on
 	 * @param valueToFilter the value to match
-	 * @return a {@link CommandResponse} with the server's response.
+	 * @return a {@link CompletableFuture<EslMessage>} with the server's response.
 	 */
 	@Override
-	public CommandResponse addEventFilter(String eventHeader, String valueToFilter) {
+	public CompletableFuture<EslMessage> addEventFilter(String eventHeader, String valueToFilter) {
 		checkConnected();
 		return clientContext.get().addEventFilter(eventHeader, valueToFilter);
 	}
@@ -289,7 +289,7 @@ public class Client implements IModEslApi {
 	 * @return a {@link CommandResponse} with the server's response.
 	 */
 	@Override
-	public CommandResponse setLoggingLevel(LoggingLevel level) {
+	public CompletableFuture<EslMessage> setLoggingLevel(LoggingLevel level) {
 		checkConnected();
 		return clientContext.get().setLoggingLevel(level);
 	}
@@ -300,7 +300,7 @@ public class Client implements IModEslApi {
 	 * @return a {@link CommandResponse} with the server's response.
 	 */
 	@Override
-	public CommandResponse cancelLogging() {
+	public CompletableFuture<EslMessage> cancelLogging() {
 		checkConnected();
 		return clientContext.get().cancelLogging();
 	}
