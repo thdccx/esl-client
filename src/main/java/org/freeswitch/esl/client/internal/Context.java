@@ -146,45 +146,32 @@ public class Context implements IModEslApi {
 	 *
 	 * @param format can be { plain | xml }
 	 * @param events { all | space separated list of events }
-	 * @return a {@link org.freeswitch.esl.client.transport.CommandResponse} with the server's response.
+	 * @return a {@link CompletableFuture<EslMessage>} with the server's response.
 	 */
 	@Override
-	public CommandResponse setEventSubscriptions(EventFormat format, String events) {
+	public CompletableFuture<EslMessage> setEventSubscriptions(EventFormat format, String events) {
 
 		// temporary hack
 		checkState(format.equals(PLAIN), "Only 'plain' event format is supported at present");
 
-		try {
-
-			final StringBuilder sb = new StringBuilder();
-			sb.append("event ").append(format.toString());
-			if (!isNullOrEmpty(events)) {
-				sb.append(' ').append(events);
-			}
-
-			final EslMessage response = getUnchecked(handler.sendApiSingleLineCommand(channel, sb.toString()));
-			return new CommandResponse(sb.toString(), response);
-
-		} catch (Throwable t) {
-			throw propagate(t);
+		final StringBuilder sb = new StringBuilder();
+		sb.append("event ").append(format.toString());
+		if (!isNullOrEmpty(events)) {
+			sb.append(' ').append(events);
 		}
+
+		return handler.sendApiSingleLineCommand(channel, sb.toString());
 
 	}
 
 	/**
 	 * Cancel any existing event subscription.
 	 *
-	 * @return a {@link CommandResponse} with the server's response.
+	 * @return a {@link CompletableFuture<EslMessage>} with the server's response.
 	 */
 	@Override
-	public CommandResponse cancelEventSubscriptions() {
-
-		try {
-			final EslMessage response = getUnchecked(handler.sendApiSingleLineCommand(channel, "noevents"));
-			return new CommandResponse("noevents", response);
-		} catch (Throwable t) {
-			throw propagate(t);
-		}
+	public CompletableFuture<EslMessage> cancelEventSubscriptions() {
+		return handler.sendApiSingleLineCommand(channel, "noevents");
 	}
 
 	/**
@@ -205,26 +192,20 @@ public class Context implements IModEslApi {
 	 *
 	 * @param eventHeader   to filter on
 	 * @param valueToFilter the value to match
-	 * @return a {@link CommandResponse} with the server's response.
+	 * @return a {@link CompletableFuture<EslMessage>} with the server's response.
 	 */
 	@Override
-	public CommandResponse addEventFilter(String eventHeader, String valueToFilter) {
+	public CompletableFuture<EslMessage> addEventFilter(String eventHeader, String valueToFilter) {
 
 		checkArgument(!isNullOrEmpty(eventHeader), "eventHeader cannot be null or empty");
 
-		try {
-			final StringBuilder sb = new StringBuilder();
-			sb.append("filter ").append(eventHeader);
-			if (!isNullOrEmpty(valueToFilter)) {
-				sb.append(' ').append(valueToFilter);
-			}
-
-			final EslMessage response = getUnchecked(handler.sendApiSingleLineCommand(channel, sb.toString()));
-			return new CommandResponse(sb.toString(), response);
-
-		} catch (Throwable t) {
-			throw propagate(t);
+		final StringBuilder sb = new StringBuilder();
+		sb.append("filter ").append(eventHeader);
+		if (!isNullOrEmpty(valueToFilter)) {
+			sb.append(' ').append(valueToFilter);
 		}
+
+		return handler.sendApiSingleLineCommand(channel, sb.toString());
 	}
 
 	/**
@@ -272,21 +253,14 @@ public class Context implements IModEslApi {
 	 * Enable log output.
 	 *
 	 * @param level using the same values as in console.conf
-	 * @return a {@link CommandResponse} with the server's response.
+	 * @return a {@link CompletableFuture<EslMessage>} with the server's response.
 	 */
 	@Override
-	public CommandResponse setLoggingLevel(LoggingLevel level) {
+	public CompletableFuture<EslMessage> setLoggingLevel(LoggingLevel level) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("log ").append(level.toString());
 
-		try {
-			final StringBuilder sb = new StringBuilder();
-			sb.append("log ").append(level.toString());
-
-			final EslMessage response = getUnchecked(handler.sendApiSingleLineCommand(channel, sb.toString()));
-			return new CommandResponse(sb.toString(), response);
-		} catch (Throwable t) {
-			throw propagate(t);
-		}
-
+		return handler.sendApiSingleLineCommand(channel, sb.toString());
 	}
 
 	/**
@@ -295,14 +269,8 @@ public class Context implements IModEslApi {
 	 * @return a {@link CommandResponse} with the server's response.
 	 */
 	@Override
-	public CommandResponse cancelLogging() {
-
-		try {
-			final EslMessage response = getUnchecked(handler.sendApiSingleLineCommand(channel, "nolog"));
-			return new CommandResponse("nolog", response);
-		} catch (Throwable t) {
-			throw propagate(t);
-		}
+	public CompletableFuture<EslMessage> cancelLogging() {
+		return handler.sendApiSingleLineCommand(channel, "nolog");
 	}
 
   public void closeChannel() {
