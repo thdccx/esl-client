@@ -7,6 +7,9 @@ import org.freeswitch.esl.client.transport.event.EslEvent;
 import org.freeswitch.esl.client.transport.message.EslMessage;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.google.common.base.Preconditions.*;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -28,6 +31,16 @@ public class Context implements IModEslApi {
 	@Override
 	public boolean canSend() {
 		return channel != null && channel.isActive();
+	}
+
+	@Override
+	public boolean isConnectionAlive(Integer pingTimeoutSecond) {
+		try {
+			handler.sendApiSingleLineCommand(channel, "api version short").get(pingTimeoutSecond, TimeUnit.SECONDS);
+		} catch (ExecutionException | InterruptedException | TimeoutException e) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

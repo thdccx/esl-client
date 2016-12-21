@@ -53,6 +53,8 @@ public interface IModEslApi {
 
 	boolean canSend();
 
+	boolean isConnectionAlive(Integer pingTimeoutSecond);
+
 	EslMessage sendApiCommand(String command, String arg);
 
 	CompletableFuture<EslEvent> sendBackgroundApiCommand(String command, String arg);
