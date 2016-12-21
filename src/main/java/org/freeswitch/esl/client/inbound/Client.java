@@ -73,6 +73,11 @@ public class Client implements IModEslApi {
 			&& authenticated;
 	}
 
+	@Override
+	public boolean isConnectionAlive(Integer pingTimeoutSecond) {
+		return canSend() && clientContext.get().isConnectionAlive(pingTimeoutSecond);
+	}
+
 	private void checkConnected() {
 		if (!canSend()) {
 			throw new IllegalStateException("Not connected to FreeSWITCH Event Socket");
