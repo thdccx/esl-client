@@ -122,6 +122,7 @@ public class Client implements IModEslApi {
 
 		// Wait till attempt succeeds, fails or timeouts
 		if (!future.awaitUninterruptibly(timeoutSeconds, TimeUnit.SECONDS)) {
+			workerGroup.shutdownGracefully();
 			throw new InboundConnectionFailure("Timeout connecting to " + clientAddress);
 		}
 		// Did not timeout
