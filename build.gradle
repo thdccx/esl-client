@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 group = 'org.freeswitch.esl.client'
-version = '0.10.0-SNAPSHOT'
+//version = '0.10.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -17,4 +17,15 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.6.1'
     runtime 'ch.qos.logback:logback-classic:1.0.0'
     testCompile 'junit:junit:4.8.1'
+}
+
+jar {
+    from {
+        (configurations.runtime).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    manifest {
+        attributes 'Main-Class': 'org.thdccx.freeswitch.esl.HelloFreeswitch'
+    }
 }
