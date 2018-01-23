@@ -36,6 +36,9 @@
   <logger name="org.freeswitch.esl.client">
     <level value="info" />
   </logger>
+  <logger name="io.netty">
+    <level value="debug" />
+  </logger>
 
   <root>
     <level value="info" />

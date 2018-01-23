@@ -43,7 +43,7 @@ public class OutboundTest {
                                     .getMessageHeaders(), eslEvent.getEventBodyLines()));
 
                             String uuid = eslEvent.getEventHeaders()
-                                    .get("unique-id");
+                                    .get("Unique-ID");
 
                             logger.warn(
                                     "Creating execute app for uuid {}",
